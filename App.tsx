@@ -36,7 +36,7 @@ const App = () => {
       })
       .catch((error) => {
         setCardData([]);
-        Alert.alert("Something went wrong", `${error.response}`);
+        Alert.alert("Something went wrong", `${error.response.data}`);
       })
       .finally(() => setLoader(false));
   };
