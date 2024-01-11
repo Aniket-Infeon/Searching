@@ -4,6 +4,7 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { COLORS } from "./src/utils";
@@ -21,7 +22,6 @@ const App = () => {
   const [cardData, setCardData] = useState<CardType[]>([]);
   const [focus, setFocus] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
-  console.log("cardData ==>", cardData);
 
   const getList = () => {
     if (searchedText.length == 0) {
@@ -29,16 +29,14 @@ const App = () => {
       return;
     }
     setLoader(true);
-    console.log("url ==>", Urls.DATA_URL + searchedText.trim());
     axios
       .get(Urls.DATA_URL + searchedText)
       .then((response) => {
-        console.log("in response");
         setApiData(response.data);
       })
       .catch((error) => {
-        console.log("error ==>", error);
         setCardData([]);
+        Alert.alert("Something went wrong", `${error.response}`);
       })
       .finally(() => setLoader(false));
   };
@@ -46,10 +44,8 @@ const App = () => {
   useEffect(() => {
     const prepareCardData = () => {
       if (apiData.length == 0) return;
-      console.log("process data");
       apiData?.items?.map((item: any, index: any) => {
-        let tempArr: CardType[] = cardData;
-        console.log("in");
+        let tempArr: CardType[] = [...cardData];
         let tempCardData = {
           avatar: item.owner.avatar_url,
           name: item.name,
@@ -58,7 +54,6 @@ const App = () => {
           stars: item.stargazers_count,
         };
         tempArr.push(tempCardData);
-        setCardData(tempArr);
       });
     };
     prepareCardData();
